@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 8080:80
+    depends_on:
+      - app
+    networks:
+      - node-network
+
+  app:
+    container_name: app
+    build: .
+    depends_on:
+      - db
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s npm start
+    networks:
+      - node-network
+
+  db:
+    container_name: db
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nodedb
+    volumes:
+      - ./db/mysql:/var/lib/mysql
+      - ./db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - node-network
+
+networks:
+  node-network:
+    driver: bridge
+
+volumes:
+  db-data:
