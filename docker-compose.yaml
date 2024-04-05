@@ -13,6 +13,8 @@ services:
   app:
     container_name: app
     build: .
+    volumes:
+      - .:/home/node/app/
     depends_on:
       - db
     entrypoint: dockerize -wait tcp://db:3306 -timeout 20s npm start
