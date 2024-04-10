@@ -15,6 +15,7 @@ services:
     build: .
     volumes:
       - .:/home/node/app/
+      - node-modules-volume:/home/node/app/node_modules
     depends_on:
       - db
     entrypoint: dockerize -wait tcp://db:3306 -timeout 20s npm start
@@ -40,3 +41,4 @@ networks:
 
 volumes:
   db-data:
+  node-modules-volume:
